@@ -9,6 +9,16 @@ var app = express();
 var PORT = process.env.PORT || 8080
 app.use(express.static('public'));
 
+app.engine('handlebars', exphbs({ defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
+
+var collections = ['scrapedData'];
+
+var db = mongojs(process.env.MONGO_URI || 'scraper', collections);
+db.on('error', function(error) {
+    console.log('Database Error:', error);
+});
+
 
 
 
