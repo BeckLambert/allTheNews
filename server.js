@@ -19,6 +19,45 @@ db.on('error', function(error) {
     console.log('Database Error:', error);
 });
 
+app.get('./', function(req, res) {
+    res.render('index');
+});
+
+app.get('/scrape', function(req, res) {
+        db.scrapedData.drop();
+
+    axios.get('https://www.snowmagazine.com/ski-gear')
+        .then(function(response) {
+            var $ = cheerio.load(response.data);
+            var results = [];
+            
+            $('article').each(function(i, element) {
+                var title = $(element).find('h1').children('a').text().trim();
+                var summary = $(element).find('p').text().trim();
+                var link = $(element).find('h1').children('a').attr('href').trim();
+                var image = $(element).find('source').attr('data-srcset').trim();
+                
+        if(title && summary && link && image) {
+            db.scrapedData.insert({
+                title: title,
+                summary: summary,
+                link: link,
+                image: image
+            },
+            function(err, inserted) {
+                if(err) {
+                    console.log(err)
+                } else {
+                    console.log('scrapedData')
+                    console.log('inserted')
+                }
+            });
+        }
+    });
+    console.log(results);
+})
+});
+
 
 
 
