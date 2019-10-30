@@ -26,7 +26,7 @@ app.get('./', function(req, res) {
 app.get('/scrape', function(req, res) {
         db.scrapedData.drop();
 
-    axios.get('https://www.snowmagazine.com/ski-gear')
+    axios.get('https://thewirecutter.com/')
         .then(function(response) {
             var $ = cheerio.load(response.data);
             var results = [];
@@ -34,15 +34,14 @@ app.get('/scrape', function(req, res) {
             $('article').each(function(i, element) {
                 var title = $(element).find('h1').children('a').text().trim();
                 var summary = $(element).find('p').text().trim();
-                var link = $(element).find('h1').children('a').attr('href').trim();
-                var image = $(element).find('source').attr('data-srcset').trim();
+                var link = $(element).find('h4').children('a').attr('href').trim();
+                var time = $(element).find('time').text().trim();
                 
         if(title && summary && link && image) {
             db.scrapedData.insert({
                 title: title,
                 summary: summary,
                 link: link,
-                image: image
             },
             function(err, inserted) {
                 if(err) {
@@ -58,10 +57,25 @@ app.get('/scrape', function(req, res) {
 })
 });
 
+app.get('/all', function(req, res) {
+    db.scrapedData.find({}, function(err, found) {
+        if(err) {
+            console.log(err);
+        } else {
+            res.json(found);
+        }
+    });
+});
 
-
-
-
+app.get('/title', function(req, res) {
+    db.scrapedData.find().sort({ title: 1}, function(error, found) {
+        if(error) {
+            console.log(error);
+        } else {
+            res.send(found);
+        }
+    });
+});
 
 app.listen(PORT, function () {
     console.log("App running on port 8080!");
