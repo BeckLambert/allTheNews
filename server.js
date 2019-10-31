@@ -4,6 +4,7 @@ var cheerio = require('cheerio');
 var axios = require('axios');
 var express = require('express');
 var exphbs = require('express-handlebars');
+var mongoose = require('mongoose');
 
 var app = express();
 var PORT = process.env.PORT || 8080
@@ -14,10 +15,13 @@ app.set('view engine', 'handlebars');
 
 var collections = ['scrapedData'];
 
-var db = mongojs(process.env.MONGO_URI || 'scraper', collections);
+var MONGO_URI =process.env.MONGO_URI || "mongodb://localhost/scraper"
+var db = mongojs( MONGO_URI, collections);
 db.on('error', function(error) {
     console.log('Database Error:', error);
 });
+
+// var db = mongoose.connect(MONGO_URI);
 
 app.get('/', function(req, res) {
     res.render('index');
