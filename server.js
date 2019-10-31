@@ -19,7 +19,7 @@ db.on('error', function(error) {
     console.log('Database Error:', error);
 });
 
-app.get('./', function(req, res) {
+app.get('/', function(req, res) {
     res.render('index');
 });
 
@@ -31,24 +31,25 @@ app.get('/scrape', function(req, res) {
             var $ = cheerio.load(response.data);
             var results = [];
             
-            $('article').each(function(i, element) {
-                var title = $(element).find('h1').children('a').text().trim();
+            $('ul').each(function(i, element) {
+                var title = $(element).find('h4').children('a').text().trim();
                 var summary = $(element).find('p').text().trim();
-                var link = $(element).find('h4').children('a').attr('href').trim();
+                var link = $(element).find('h4').children('a').attr('href');
                 var time = $(element).find('time').text().trim();
                 
-        if(title && summary && link && image) {
+        if(title && summary && link && time) {
             db.scrapedData.insert({
                 title: title,
                 summary: summary,
                 link: link,
+                time:time
             },
             function(err, inserted) {
                 if(err) {
                     console.log(err)
                 } else {
                     console.log('scrapedData')
-                    console.log('inserted')
+                    console.log('inserted', inserted)
                 }
             });
         }
