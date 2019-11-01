@@ -15,8 +15,8 @@ app.set('view engine', 'handlebars');
 
 var collections = ['scrapedData'];
 
-var MONGO_URI =process.env.MONGO_URI || "mongodb://localhost/scraper"
-var db = mongojs( MONGO_URI, collections);
+var MONGODB_URI =process.env.MONGODB_URI || "mongodb://localhost/scraper"
+var db = mongojs( MONGODB_URI, collections);
 db.on('error', function(error) {
     console.log('Database Error:', error);
 });
