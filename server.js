@@ -4,7 +4,7 @@ var cheerio = require('cheerio');
 var axios = require('axios');
 var express = require('express');
 var exphbs = require('express-handlebars');
-var mongoose = require('mongoose');
+// var mongoose = require('mongoose');
 
 var app = express();
 var PORT = process.env.PORT || 8080
@@ -33,7 +33,6 @@ app.get('/scrape', function(req, res) {
     axios.get('https://thewirecutter.com/')
         .then(function(response) {
             var $ = cheerio.load(response.data);
-            var results = [];
             
             $('ul').each(function(i, element) {
                 var title = $(element).find('h4').children('a').text().trim();
@@ -58,7 +57,7 @@ app.get('/scrape', function(req, res) {
             });
         }
     });
-    console.log(results);
+    res.send('to find scraped data go to localhost:8080/');
 })
 });
 
